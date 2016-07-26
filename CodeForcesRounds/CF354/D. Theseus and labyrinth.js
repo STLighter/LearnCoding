@@ -129,8 +129,10 @@
 	
 	st.push(0);
 	var qu = new Queue();
+	var L = n*m*4;
 	var used = [];
-	used.length = n*m*4;
+	for(var i=0; i<L;++i)
+		used.push(false);
 	qu.push({
 		p: st,
 		l: 0
