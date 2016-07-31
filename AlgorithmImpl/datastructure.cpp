@@ -1,7 +1,59 @@
 #include<cstdio>
 #include<cstring>
 #include<string>
+#include<vector>
 using namespace std;
+class st_hashTable {
+private:
+    // 表的实际key个数
+    const static unsigned int Mod = 10007;
+    // 用vector存放实际元素
+    vector<string> arr[Mod];
+
+    // 计算字符串的hash值
+    unsigned int getStringHash(const string &str) {
+        unsigned int ret = 0;
+        for(int i=0;i<str.length(); ++i) {
+            // 一般使用的ASCII码只有0-127
+            ret<<=7;
+            ret+=str[i];
+            ret%=Mod;
+        }
+        return ret;
+    }
+
+    // 根据hash值查询
+    bool _find(unsigned int hash, const string &s) {
+        // 枚举当前hash下的每个值, 如果有一个与要查询的s相同则返回true
+        for(int i=0;i<arr[hash].size();++i)
+            if(arr[hash][i]==s)
+                return true;
+        return false;
+    }
+public:
+    st_hashTable() {
+    }
+    ~st_hashTable() {
+    }
+
+    // 查询字符串是否在hash表中
+    bool find(const string &s) {
+        // 计算hash值
+        unsigned int hash = getStringHash(s);
+        // 实际查询
+        return _find(hash, s);
+    }
+
+    // 将字符串添加到hash表中
+    void add(const string &s) {
+        // 计算hash值
+        unsigned int hash = getStringHash(s);
+        if(!_find(hash, s)) {
+            // 当前字符串不在hash表中则加入, 否则不需要重复加入
+            arr[hash].push_back(s);
+        }
+    }
+};
 class st_trie {
 private:
     // 字典树节点
