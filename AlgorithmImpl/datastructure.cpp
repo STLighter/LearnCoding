@@ -209,13 +209,7 @@ public:
 };
 
 int main() {
-    st_trie trie;
-    string ar[] = {"afgfg","afgfgf","dcfdgsfg","dffgasdfa","ffg","rtbrf","dbfg"};
-    string ar2[] = {"afgffg","ghgfggdf","dcfdgsdgfg","dffgasdfa","ffg","rtbrf","dbfg"};
-    for(int i=0;i<7;++i)
-        trie.insert(ar[i]);
-    for(int i=0;i<7;++i)
-        printf("%d\n",trie.find(ar[i]));
-    for(int i=0;i<7;++i)
-        printf("%d\n",trie.find(ar2[i]));
+    int i=0;
+    i+=++i;
+    printf("%d\n",i);
 }
