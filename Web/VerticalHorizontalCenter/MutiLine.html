@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Muti-Line</title>
+	<style type="text/css">
+		div {
+			margin: 20px 0;
+		}
+		p {
+			margin: 0;
+		}
+		/* 
+			== test1 ==
+
+			思路: 
+				将子容器设为inline-block, 并通过text-align: center和vertical-align: middle等属性使得子容器在父容器上水平垂直居中;
+			步骤:
+				1. 设置父容器height和line-height, 两者数值相同(其实只设置line-height即可). 在子容器上设置line-height: normal(或者合适的值)重置其从父容器继承的line-height;
+				2. 根据显示需要在父容器和子容器上设置width;
+				3. 在父容器上设置text-align: center使得子容器能够水平居中, 在子容器上设置display: inline-block使得父容器的text-align生效;
+				4. 子容器上设置vertical-align: middle使其能够垂直居中;
+				5. 使用::after为父容器添加内容(或者可以直接在html中添加文本), 否则父容器line-height无效;
+				6. 在父容器上设置font-size: 0, 并在子容器上重新设置font-size到合适的值, 以修正baseline.
+		 */
+		#test1 {
+			line-height: 100px;
+			background-color: black;
+			text-align: center;
+			font-size: 0;
+		}
+		#test1 p {
+			display: inline-block;
+			width: 70px;
+			line-height: normal;
+			vertical-align: middle;
+			font-size: 16px;
+			color: white;
+		}
+		#test1::after {
+			content: "$";
+		}
+
+		/*
+			== test2 ==
+
+			思路: 
+				使用table布局实现水平垂直居中;
+			步骤:
+				1. 设置父容器width, height, 并设置display: table. 为子容器上设置display: table-cell;
+				2. 为子容器设置vertical-align: middle, 使得其垂直居中. 为父容器或者子容器设置text-align: center使文字水平居中;
+				3. 要使得文本换行需要设置子容器padding或者添加br标签
+		 */
+		#test2 {
+			display: table;
+			width: 100%;
+			height: 100px;
+			background-color: black;
+		}
+		#test2 p {
+			display: table-cell;
+			text-align: center;
+			vertical-align: middle;
+			color: white;
+		}
+
+		/*
+			== test3 ==
+
+			思路: 
+				将子容器作为定宽不定高的块级元素, 将其在父容器中水平垂直居中, 并使文字在子容器上水平居中;
+			步骤:
+				1. 设置父容器height, 并设置position: relative. 为子容器上设置position: absolute;
+				2. 为子容器设置left: 50%和top: 50%使其左上角移动到父容器中间;
+				3. 为子容器设置transform: translate(-50%, -50%)将其移回到父容器中央;
+				4. 为子容器设置text-align: center使文字在其上水平居中;
+		*/
+		#test3 {
+			position: relative;
+			height: 100px;
+			background-color: black;
+		}
+		#test3 p {
+			width: 70px;
+			position: absolute;
+			text-align: center;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			color: white;
+		}
+
+		/* 
+			== test4 ==
+
+			思路:
+				使用flex布局;
+			步骤:
+				1. 在父容器上设置display: flex, 并设置justify-content: center和align-items: center使得子容器在父容器上垂直居中;
+				2. 在子容器上设置text-align: center使文字居中;
+
+		*/
+		#test4 {
+			height: 100px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-color: black;
+		}
+		#test4 p {
+			width: 70px;
+			text-align: center;
+			color: white;
+		}
+	</style>
+</head>
+<body>
+<div id = "test1">
+	<p>
+		MY TEST1
+		MY TEST1
+	</p>
+</div>
+<div id = "test2">
+	<p>
+		MY TEST2<br/>
+		MY TEST2
+	</p>
+</div>
+<div id = "test3">
+	<p>
+		MY TEST3
+		MY TEST3
+	</p>
+</div>
+<div id = "test4">
+	<p>
+		MY TEST4
+		MY TEST4
+	</p>
+</div>
+
+
+</body>
+</html>
