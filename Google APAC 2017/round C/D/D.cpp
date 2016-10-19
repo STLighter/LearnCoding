@@ -20,8 +20,6 @@ void useFile(string f) {
 	freopen((f+".out").c_str(),"w",stdout);
 }
 int a[4010],d[4010],n;
-bool used[4010];
-vector<int> m[4010];
 bool dfs() {
     if(n == 0) {
         return 0;
