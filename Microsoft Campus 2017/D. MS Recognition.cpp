@@ -16,122 +16,95 @@
 using namespace std;
 typedef long long ll;
 int h,w,l;
-int a[505][505];
-int step[4][2] = {
+bool a[505][505];
+bool used[2][505][505];
+int step[8][2] = {
     -1,0,
-    0,-1,
     -1,-1,
+    0,-1,
+    1,-1,
+    1,0,
+    1,1,
+    0,1,
     -1,1
 };
-int step9[9][2] = {
-    0,0,
-    -1,0,
-    0,-1,
-    1,0,
-    0,1,
-    -1,-1,
-    -1,1,
-    1,-1,
-    1,1
-};
-vector<pair<int, int> > v[505*505];
 
 bool check(int x, int y) {
-    return (x>0&&x<=h&&y>0&&y<=w&&a[x][y]!=-1);
+    return (x>=0&&x<h&&y>=0&&y<w&&a[x][y]);
 }
-bool checkMir(int x, int y) {
-    int tx,ty;
-    for(int i=0;i<1;++i) {
-        tx = x + step9[i][0];
-        ty = y + step9[i][1];
-        if(check(tx, ty)) {
-            return 1;
-        }
-    }
-    return 0;
+bool wise(pair<int, int> v1, pair<int, int> v2) {
+    return (v1.first*v2.second - v1.second*v2.first > 0);
 }
-int getV(int i, int j) {
-    return (i-1)*w+j-1;
-}
-void getC(int v, int &i, int &j) {
-    i = v/w + 1;
-    j = v%w + 1;
-}
-int Find(int i, int j) {
-    int tmp = getV(i, j);
-    if(tmp != a[i][j]) {
-        int x, y;
-        getC(a[i][j], x, y);
-        return (a[i][j] = Find(x, y));
-    }
-    return tmp;
-}
-void Union(int i1, int j1, int i2, int j2) {
-    int t1 = Find(i1, j1);
-    int t2 = Find(i2, j2);
-
-    if(t1 == t2)
-        return;
-    getC(t1, i1, j1);
-    a[i1][j1] = t2;
-}
-
 int main() {
     char c;
-    memset(a,-1,sizeof(a));
     scanf("%d%d",&h,&w);
     getchar();
-    for(int i=1;i<=h;++i) {
-        for(int j=1;j<=w;++j) {
+    for(int i=0;i<h;++i) {
+        for(int j=0;j<w;++j) {
             c = getchar();
             if(c=='#') {
-                a[i][j] = getV(i, j);
-                for(int k=0;k<4;++k) {
-                    int x = i + step[k][0];
-                    int y = j + step[k][1];
-                    if(check(x, y))
-                        Union(x, y, i, j);
-                }
+                a[i][j] = 1;
             }
         }
         getchar();
     }
-    map<int, int> ma;
-    int tmp, p;
-    l = 0;
-    for(int i=1;i<=h;++i) {
-        for(int j=1;j<=w;++j) {
-            if(a[i][j]!=-1) {
-                tmp = Find(i,j);
-                p = ma[tmp];
-                if(!p) {
-                    ma[tmp] = p = ++l;
+
+    int s = 0, l = 0;
+    for(int i=0;i<h;++i) {
+        for(int j=0;j<w;++j) {
+            if(a[i][j]&&!used[1][i][j]) {
+                ++l;
+                queue<pair<int, int> > qu;
+                pair<int, int> p, q;
+                int x, y, cnt = 0;
+                double eval;
+                used[0][p.first][p.second] = 1;
+                qu.push(make_pair(i,j));
+                while(!qu.empty()) {
+                    p = qu.front();
+                    qu.pop();
+                    for(int k=0;k<8;++k) {
+                        x = p.first + step[k][0];
+                        y = p.second + step[k][1];
+                        if(check(x,y)&&!used[0][x][y]) {
+                            used[0][x][y] = 1;
+                            qu.push(make_pair(x,y));
+                        }
+                    }
                 }
-                v[p].push_back(make_pair(i,j));
+
+                qu.push(p);
+                used[1][p.first][p.second] = 1;
+                vector<pair<int, int> > st;
+                while(!qu.empty()) {
+                    q = qu.front();
+                    st.push_back(q);
+                    qu.pop();
+                    for(int k=0;k<8;++k) {
+                        x = q.first + step[k][0];
+                        y = q.second + step[k][1];
+                        if(check(x,y)&&!used[1][x][y]) {
+                            used[1][x][y] = 1;
+                            qu.push(make_pair(x,y));
+                        }
+                    }
+                }
+
+                for(int k=0;k<st.size();++k) {
+                    if(wise(make_pair(p.first - st[k].first, p.second - st[k].second), make_pair(q.first - st[k].first, q.second - st[k].second))) {
+                        ++cnt;
+                    }
+                }
+
+                eval = fabs(1.0*cnt/st.size() - 0.5);
+                cout<<eval<<endl;
+
+                if(eval < 0.1) {
+                    ++s;
+                }
             }
-
         }
     }
 
-    int s = 0;
-
-    for(int i=1;i<=l;++i) {
-        double x = 0, y = 0;
-        for(int j=0;j<v[i].size();++j) {
-            x += v[i][j].first;
-            y += v[i][j].second;
-        }
-        x /= v[i].size();
-        y /= v[i].size();
-
-
-        double eval = 0;
-
-        cout<<i<<' '<<eval<<endl;
-        if(eval >= 0.5) {
-            cout<<i<<endl;
-            ++s;
-        }
-    }
     printf("%d %d\n", l - s, s);
 }
