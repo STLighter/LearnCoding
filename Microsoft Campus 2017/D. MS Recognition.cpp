@@ -15,9 +15,9 @@
 #include<set>
 using namespace std;
 typedef long long ll;
-int h,w,l;
-bool a[505][505];
-bool used[2][505][505];
+int h,w;
+bool a[555][555];
+bool used[2][555][555];
 int step[8][2] = {
     -1,0,
     -1,-1,
@@ -32,21 +32,18 @@ int step[8][2] = {
 bool check(int x, int y) {
     return (x>=0&&x<h&&y>=0&&y<w&&a[x][y]);
 }
-bool wise(pair<int, int> v1, pair<int, int> v2) {
-    return (v1.first*v2.second - v1.second*v2.first > 0);
-}
 int main() {
     char c;
+    string str;
     scanf("%d%d",&h,&w);
-    getchar();
     for(int i=0;i<h;++i) {
+        cin>>str;
         for(int j=0;j<w;++j) {
-            c = getchar();
+            c = str[j];
             if(c=='#') {
                 a[i][j] = 1;
             }
         }
-        getchar();
     }
 
     int s = 0, l = 0;
@@ -57,12 +54,14 @@ int main() {
                 queue<pair<int, int> > qu;
                 pair<int, int> p, q;
                 int x, y, cnt = 0;
+                int tp = h, bt = 0, lt = w, rt = 0;
                 double eval;
-                used[0][p.first][p.second] = 1;
+                used[0][i][j] = 1;
                 qu.push(make_pair(i,j));
                 while(!qu.empty()) {
                     p = qu.front();
                     qu.pop();
+
                     for(int k=0;k<8;++k) {
                         x = p.first + step[k][0];
                         y = p.second + step[k][1];
@@ -75,11 +74,13 @@ int main() {
 
                 qu.push(p);
                 used[1][p.first][p.second] = 1;
-                vector<pair<int, int> > st;
                 while(!qu.empty()) {
                     q = qu.front();
-                    st.push_back(q);
                     qu.pop();
+                    tp = min(tp, q.first);
+                    bt = max(bt, q.first);
+                    lt = min(lt, q.second);
+                    rt = max(rt, q.second);
                     for(int k=0;k<8;++k) {
                         x = q.first + step[k][0];
                         y = q.second + step[k][1];
@@ -90,16 +91,15 @@ int main() {
                     }
                 }
 
-                for(int k=0;k<st.size();++k) {
-                    if(wise(make_pair(p.first - st[k].first, p.second - st[k].second), make_pair(q.first - st[k].first, q.second - st[k].second))) {
-                        ++cnt;
-                    }
-                }
+                double tmp1, tmp2, tmp3, tmp4;
+                tmp1 = tp + bt - p.first - q.first;
+                tmp2 = lt + rt - p.second - q.second;
+                tmp3 = p.first - q.first;
+                tmp4 = p.second - q.second;
+                eval = (tmp1*tmp1 + tmp2*tmp2) / (tmp3*tmp3 + tmp4*tmp4);
+                //cout<<eval<<endl;
 
-                eval = fabs(1.0*cnt/st.size() - 0.5);
-                cout<<eval<<endl;
-
-                if(eval < 0.1) {
+                if(eval < 0.3) {
                     ++s;
                 }
             }
